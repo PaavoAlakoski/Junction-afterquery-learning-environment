@@ -18,7 +18,7 @@ Slides: `report/slides.pdf`. Live page: `replay.html` in the project root
 |---|---|---|---|
 | 0:00 | 1 | Title | "Our agent knows the rules, sees the whole system, and still runs out of stock. We'll show you why." |
 | 0:30 | 2 | The task | Four stages, four orders a week. A factory decision reaches a customer nine weeks later. Stock costs up to 1 a week; an unfilled order costs 10. Demand shifts once per episode, and the rules say so. |
-| 2:00 | 3 | The gap | Reference 67. Haiku 42 to 53 over three runs. Sonnet 22 in one run. Doing nothing and stopping early score 0. Say plainly that Sonnet was run once. |
+| 2:00 | 3 | The gap | Reference 73. Haiku 42 to 53 over three runs. Sonnet 22 in one run. Doing nothing and stopping early score 0. Say plainly that Sonnet was run once. |
 | 3:00 | 4, then `replay.html` | Why | Switch to the live page. Point at weeks 13 to 26: demand is quiet, Sonnet lets stock fall from 311 to 161. Then week 25 onwards: the retailer is empty for 14 weeks. Hover to show the numbers. Switch scenario or run if a judge asks. |
 | 5:00 | 5 | It is a fair failure | Read the quote. The agent was told the price of being short, the size of the possible rise, and the delay. The reference uses the same rules text and the same weekly state. |
 | 6:00 | 6 | Reward integrity | Every shortcut scores 0. The handover rule closes the "run stock down at the end" trick. Invite the judges to try to break it. |
@@ -31,17 +31,17 @@ Slides: `report/slides.pdf`. Live page: `replay.html` in the project root
 
 | | Score | Total cost |
 |---|---|---|
-| Reference | 67.0 | 22,754 |
+| Reference | 73.3 | 20,249 |
 | Small policy, trained | 62.3 | 24,586 |
 | Haiku 5.5 (three runs) | 52.7 / 48.3 / 42.3 | 28,390 / 30,114 / 32,473 |
 | Sonnet 5.5 (one run) | 21.7 | 40,622 |
 | Naive pass-through | 0.0 | 49,188 |
-| Stop after week 10 | 0.0 | 832,895 |
+| Stop after week 10 | 0.0 | 834,229 |
 | Do nothing | 0.0 | 1,305,699 |
 
-- The reference had the lower cost in 18 of 20 agent scenario runs.
-- Reference on 40 unseen scenarios (seeds 3000-3039): 78.1.
-- Customer-backlog cost per scenario: reference 0-320, Haiku 80-4,890,
+- The reference had the lower cost in 19 of 20 agent scenario runs.
+- Reference on 40 other scenarios (seeds 3000-3039): 76.4.
+- Customer-backlog cost per scenario: reference 40-800, Haiku 80-4,890,
   Sonnet 3,080-6,610.
 
 ## Likely questions
@@ -53,14 +53,15 @@ reliably worse than Haiku, only that both are well below the reference.
 
 **Is the reference using anything the agent does not have?**
 No. It reads the demand model from the same rules text and uses the same
-weekly state. Its four service levels were tuned on seeds 1000-1149 and
-checked on 1150-1249; the evaluation uses seeds 1-5.
+weekly state. Its service levels are not tuned at all: they are the
+standard newsvendor ratios computed from the costs in the rules.
 
-**The reference scores 0 on scenario 1. Why?**
+**The reference scores only 21 on scenario 1. Why?**
 Demand drifts down in that scenario, so the stock the reference keeps against
-a rise is never needed, and the naive rule is hard to beat. This happens on
-about one scenario in seven. The suite score pools all scenarios, and on 40
-unseen scenarios the reference scores 78.1.
+a rise is never needed, and the naive rule is close to the best anyone can do
+without foresight. Even with levels picked in hindsight for that scenario,
+this kind of policy reaches about 22. On 40 other scenarios the reference
+scores 76.4 and fails to beat naive on 2.
 
 **How does the harness connect?**
 `python mcp_server.py --seed N` is an MCP server (stdio, or HTTP with
@@ -111,11 +112,11 @@ fine-tune a language model.
 ## Still to check before the demo
 
 - **Run the Harbor tasks once on a machine with Docker.** `harbor run -p
-  harbor/tasks -a oracle` should give rewards 0.00, 0.90, 0.33, 0.65, 0.65.
+  harbor/tasks -a oracle` should give rewards 0.21, 0.94, 0.48, 0.69, 0.67.
   They have never been run in containers.
 - **Compare `harbor/tasks/` with AfterQuery's scoring skeleton and starter
   kit.** We built from Harbor's public docs, not from their skeleton.
 - **Run OpenCode on at least one task** with the team's model credits, so
   the gap is measured under the judging harness.
 - **Ask a mentor how they run the stop-early baseline**, and whether a
-  reference that scores 0 on one of five tasks is a concern for them.
+  reference that scores 0.21 on one of five tasks is a concern for them.

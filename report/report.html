@@ -54,9 +54,9 @@ Team "Rome wasn't built in 48h" · 14 November 2026</p>
 a reason that comes from the task: they cut stock to save holding cost and cannot recover when demand
 rises.</b></p>
 <ul>
-  <li>On the five default scenarios the reference scores 67.0 out of 100. Claude Haiku 5.5 scored 42.3,
+  <li>On the five default scenarios the reference scores 73.3 out of 100. Claude Haiku 5.5 scored 42.3,
       48.3 and 52.7 in three runs; Claude Sonnet 5.5 scored 21.7 in one run.</li>
-  <li>The reference had the lower cost in 18 of the 20 agent scenario runs.</li>
+  <li>The reference had the lower cost in 19 of the 20 agent scenario runs.</li>
   <li>Doing nothing, stopping early, flooding the chain, hoarding at the factory and random orders all
       score 0.</li>
   <li>A nine-number policy trained on the environment from episode cost alone rises from 0.0 to 62.3, so
@@ -117,13 +117,15 @@ with one command.</p>
   <li><b>Forecast.</b> It draws 4,000 candidate scenarios from the demand model stated in the rules, weighs
       each by how well it explains the demand seen so far, and reads off the distribution of demand over
       the coming weeks.</li>
-  <li><b>Ordering.</b> Each stage orders up to a high quantile (97–98%) of forecast demand over its
+  <li><b>Ordering.</b> Each stage orders up to a high quantile (91–98%) of forecast demand over its
       cumulative lead time, counting everything already at or on its way to that stage and the stages
       below it.</li>
 </ul>
-<p>Its four service levels were tuned on seeds 1000–1149 and checked on seeds 1150–1249, where it scores
-76.4 and 77.4. None of those are evaluation seeds. On ten further seeds (11–20) it scores 77.3, and on 40
-seeds never used for any tuning (3000–3039) it scores 78.1.</p>
+<p>Its service levels are not tuned on any scenario. They are the newsvendor critical ratios for a serial
+supply chain, computed from the costs in the rules: (backlog cost + holding cost one stage up) divided by
+(backlog cost + retailer holding cost), which gives 97.7%, 95.5%, 93.2% and 90.9% from retailer to factory.
+On scenarios outside the evaluation suite it scores 71.4 (seeds 11–20), 76.4 (seeds 3000–3039) and 74.2
+(seeds 1000–1149).</p>
 
 <h2>4. Results</h2>
 <p>All runs use the five default scenarios (seeds 1–5). The agents were run through the Anthropic API at
@@ -131,7 +133,7 @@ medium effort. Each week the agent received the rules, the full observation and 
 previous week, and replied with four orders. It had no code execution.</p>
 
 <div class="chart">
-  <div class="row"><div class="lab">Reference</div><div class="track"><div class="bar ref" style="width:67%"></div></div><div class="val">67.0</div></div>
+  <div class="row"><div class="lab">Reference</div><div class="track"><div class="bar ref" style="width:73.3%"></div></div><div class="val">73.3</div></div>
   <div class="row"><div class="lab">Small policy, trained</div><div class="track"><div class="bar small" style="width:62.3%"></div></div><div class="val">62.3</div></div>
   <div class="row"><div class="lab">Haiku 5.5, run 3</div><div class="track"><div class="bar agent" style="width:52.7%"></div></div><div class="val">52.7</div></div>
   <div class="row"><div class="lab">Haiku 5.5, run 2</div><div class="track"><div class="bar agent" style="width:48.3%"></div></div><div class="val">48.3</div></div>
@@ -145,26 +147,26 @@ previous week, and replied with four orders. It had no code execution.</p>
 
 <table class="nb">
   <tr><th>Policy</th><th>Suite score</th><th>Total cost</th><th>Gap to reference</th></tr>
-  <tr><td>Reference</td><td>67.0</td><td>22,754</td><td>–</td></tr>
-  <tr><td>Small policy, trained</td><td>62.3</td><td>24,586</td><td>4.7</td></tr>
-  <tr><td>Haiku 5.5 (mean of 3 runs)</td><td>47.8</td><td>30,326</td><td>19.2</td></tr>
-  <tr><td>Sonnet 5.5 (1 run)</td><td>21.7</td><td>40,622</td><td>45.3</td></tr>
-  <tr><td>Naive pass-through</td><td>0.0</td><td>49,188</td><td>67.0</td></tr>
-  <tr><td>Stop after week 10</td><td>0.0</td><td>832,895</td><td>67.0</td></tr>
-  <tr><td>Do nothing</td><td>0.0</td><td>1,305,699</td><td>67.0</td></tr>
+  <tr><td>Reference</td><td>73.3</td><td>20,249</td><td>–</td></tr>
+  <tr><td>Small policy, trained</td><td>62.3</td><td>24,586</td><td>11.0</td></tr>
+  <tr><td>Haiku 5.5 (mean of 3 runs)</td><td>47.8</td><td>30,326</td><td>25.5</td></tr>
+  <tr><td>Sonnet 5.5 (1 run)</td><td>21.7</td><td>40,622</td><td>51.6</td></tr>
+  <tr><td>Naive pass-through</td><td>0.0</td><td>49,188</td><td>73.3</td></tr>
+  <tr><td>Stop after week 10</td><td>0.0</td><td>834,229</td><td>73.3</td></tr>
+  <tr><td>Do nothing</td><td>0.0</td><td>1,305,699</td><td>73.3</td></tr>
 </table>
 
 <h3>Cost per scenario (lower is better)</h3>
 <table class="nb">
   <tr><th>Scenario</th><th>Naive</th><th>Reference</th><th>Haiku 1</th><th>Haiku 2</th><th>Haiku 3</th><th>Sonnet</th></tr>
-  <tr><td>1</td><td>4,149</td><td>4,195</td><td>5,081</td><td class="win">3,930</td><td>5,732</td><td>6,334</td></tr>
-  <tr><td>2</td><td>18,050</td><td>3,783</td><td>6,190</td><td>6,940</td><td>4,524</td><td>8,386</td></tr>
-  <tr><td>3</td><td>6,562</td><td>5,272</td><td>9,956</td><td>7,163</td><td>6,966</td><td>10,574</td></tr>
-  <tr><td>4</td><td>10,969</td><td>5,124</td><td>6,686</td><td>6,320</td><td class="win">3,961</td><td>6,767</td></tr>
-  <tr><td>5</td><td>9,458</td><td>4,380</td><td>4,559</td><td>5,761</td><td>7,207</td><td>8,562</td></tr>
-  <tr><td><b>Total</b></td><td><b>49,188</b></td><td><b>22,754</b></td><td><b>32,473</b></td><td><b>30,114</b></td><td><b>28,390</b></td><td><b>40,622</b></td></tr>
+  <tr><td>1</td><td>4,149</td><td>3,563</td><td>5,081</td><td>3,930</td><td>5,732</td><td>6,334</td></tr>
+  <tr><td>2</td><td>18,050</td><td>3,096</td><td>6,190</td><td>6,940</td><td>4,524</td><td>8,386</td></tr>
+  <tr><td>3</td><td>6,562</td><td>4,649</td><td>9,956</td><td>7,163</td><td>6,966</td><td>10,574</td></tr>
+  <tr><td>4</td><td>10,969</td><td>4,700</td><td>6,686</td><td>6,320</td><td class="win">3,961</td><td>6,767</td></tr>
+  <tr><td>5</td><td>9,458</td><td>4,241</td><td>4,559</td><td>5,761</td><td>7,207</td><td>8,562</td></tr>
+  <tr><td><b>Total</b></td><td><b>49,188</b></td><td><b>20,249</b></td><td><b>32,473</b></td><td><b>30,114</b></td><td><b>28,390</b></td><td><b>40,622</b></td></tr>
 </table>
-<p class="cap">Bold: the two scenario runs in which an agent beat the reference.</p>
+<p class="cap">Bold: the one scenario run in which an agent beat the reference.</p>
 <p>Every agent run finished below the reference on the suite total. Haiku's runs spread over about ten
 points, and the same scenario can swing widely between runs (scenario 5: 4,559 to 7,207).</p>
 
@@ -174,8 +176,8 @@ agents spend about the same as the reference on holding stock, or less, and far 
 demand.</p>
 <table class="nb">
   <tr><th>Cost per scenario</th><th>Reference</th><th>Haiku 5.5</th><th>Sonnet 5.5</th></tr>
-  <tr><td>Holding stock</td><td>3,783–5,202</td><td>2,877–6,020</td><td>2,462–3,964</td></tr>
-  <tr><td>Customer backlog</td><td>0–320</td><td>80–4,890</td><td>3,080–6,610</td></tr>
+  <tr><td>Holding stock</td><td>3,056–4,569</td><td>2,877–6,020</td><td>2,462–3,964</td></tr>
+  <tr><td>Customer backlog</td><td>40–800</td><td>80–4,890</td><td>3,080–6,610</td></tr>
   <tr><td>Handover penalty</td><td>0</td><td>0</td><td>0</td></tr>
 </table>
 <p>The mistake connects to three decisions in the task:</p>
@@ -189,10 +191,10 @@ demand.</p>
       reach customers. Reacting at that point is too late; the stock has to be in the pipeline already.</li>
 </ul>
 <p><b>Example: Sonnet 5.5 on scenario 3.</b> When demand dipped in weeks 13–20, Sonnet ordered almost
-nothing upstream and let system stock fall from 311 to 187 units; the reference kept it near 300. Demand
+nothing upstream and let system stock fall from 311 to 187 units; the reference kept it above 225. Demand
 rose from week 25, the retailer stood empty for 14 weeks, and backlog reached 39 units. A second rise in
 weeks 48–52 pushed backlog to 115 units with the factory already at its cap of 80. Sonnet's cost was
-10,574 against the reference's 5,272.</p>
+10,574 against the reference's 4,649.</p>
 <p><b>The stronger model did worse.</b> Sonnet trimmed stock more aggressively than Haiku, which lowered its
 holding cost and raised its backlog cost by more. This rests on one Sonnet run, so the size of the
 difference is uncertain.</p>
@@ -230,7 +232,7 @@ and takes about two minutes.</p>
   <tr><th></th><th>Evaluation seeds 1–5</th><th>Held-out seeds 3000–3039</th></tr>
   <tr><td>Before training</td><td>0.0</td><td>13.5</td></tr>
   <tr><td>After training</td><td>62.3</td><td>71.8</td></tr>
-  <tr><td>Reference</td><td>67.0</td><td>78.1</td></tr>
+  <tr><td>Reference</td><td>73.3</td><td>76.4</td></tr>
 </table>
 <p>The reward gives a usable training signal, what is learned carries over to scenarios never trained on,
 and the trained policy ends above both Claude models and below the reference. The task is therefore
@@ -252,9 +254,11 @@ transcripts to a timestamped file in <code>results/</code>.</p>
 <ul>
   <li><b>Sample size.</b> Five scenarios, three Haiku runs and one Sonnet run. The direction of the gap is
       consistent; its exact size is not well measured.</li>
-  <li><b>The reference is not best on every scenario.</b> On scenario 1 it scores 0.0, slightly worse than
-      naive, because it carries stock against a rise in demand that does not come. On the tuning seeds it
-      fails to beat naive on roughly one scenario in seven. Its advantage shows in the pooled score.</li>
+  <li><b>The reference's score varies by scenario.</b> It scores 21.0, 94.3, 48.3, 69.3 and 66.6 on
+      scenarios 1–5. In scenario 1 demand drifts down, so stock held against a rise is wasted and the naive
+      rule is close to the best possible without foresight; even with service levels chosen in hindsight for
+      that scenario, this kind of policy reaches about 22. On 40 other scenarios it fails to beat the naive
+      rule on 2.</li>
   <li><b>Agent setup.</b> The agents ran at medium effort without code execution, through the Anthropic
       API: each week they saw the rules, the state and their own notes. Through the MCP server an agent
       keeps its whole conversation instead. No agent has been run that way yet, so the gap under the

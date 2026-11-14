@@ -73,13 +73,13 @@ Default suite, seeds 1-5 (score 0-100, higher is better):
 
 | Policy | Score | Total cost |
 |---|---|---|
-| Reference | 67.0 | 22,754 |
+| Reference | 73.3 | 20,249 |
 | Small policy, trained (`train.py`) | 62.3 | 24,586 |
 | Claude Haiku 5.5, three runs | 52.7 / 48.3 / 42.3 | 28,390 / 30,114 / 32,473 |
 | Claude Sonnet 5.5, one run | 21.7 | 40,622 |
 | Naive pass-through | 0.0 | 49,188 |
 | Small policy, untrained | 0.0 | 65,260 |
-| Stop after week 10 | 0.0 | 832,895 |
+| Stop after week 10 | 0.0 | 834,229 |
 | Do nothing | 0.0 | 1,305,699 |
 
 The first, second and last four rows are deterministic and are reproduced by
@@ -90,21 +90,21 @@ reply. Both models ran at medium effort, received the rules, the full state
 and their own notes each week, and had no code execution.
 
 **The gap.** Every agent run finished below the reference on the suite, and
-the reference had the lower cost in 18 of 20 agent scenario runs. Haiku's
+the reference had the lower cost in 19 of 20 agent scenario runs. Haiku's
 three runs spread over ten points. Sonnet has been run once, so its exact
 score is uncertain.
 
 **Why the agents lose.** They trim stock to save holding cost and are caught
 short when demand rises. Their holding cost is about the reference's or
-lower; their customer-backlog cost is far higher (reference 0-320 per
+lower; their customer-backlog cost is far higher (reference 40-800 per
 scenario, Haiku 80-4,890, Sonnet 3,080-6,610). The rules state that a unit of
 backlog costs ten times a unit of retailer stock and that demand may step up
 by 40-90%; goods ordered after the rise take up to nine weeks to arrive.
 `python replay.py` shows this week by week for any saved run.
 
 Five scenarios is a small sample. On ten further seeds (11-20) the reference
-scores 77.3, and on 40 seeds never used for any tuning (3000-3039) it scores
-78.1.
+scores 71.4, on 40 other seeds (3000-3039) 76.4, and on 150 more
+(1000-1149) 74.2.
 
 ## Learning from the environment
 
@@ -116,7 +116,7 @@ about the demand model and does not use the reference's forecast.
 |---|---|---|
 | Before training | 0.0 | 13.5 |
 | After 45,000 training episodes | 62.3 | 71.8 |
-| Reference | 67.0 | 78.1 |
+| Reference | 73.3 | 76.4 |
 
 It trains on seeds 2000-2059 only; the learning curve is in
 `results/training.json`. So the reward gives a usable training signal, what
@@ -137,9 +137,11 @@ a Bayesian demand forecast (`supplychain/forecast.py`).
   over its cumulative lead time, counting everything already at or on its way
   to that stage and the stages below it.
 
-It uses only the demand history and state the agent also sees. Its four
-service levels were found by search on seeds 1000-1149 and checked on seeds
-1150-1249 (scores 76.4 and 77.4); none of those are evaluation seeds.
+It uses only the demand history and state the agent also sees. Its service
+levels are not tuned on any scenario. They are the newsvendor critical ratios
+for a serial supply chain, computed from the costs in the rules:
+`(backlog cost + holding cost one stage up) / (backlog cost + retailer holding
+cost)`, which gives 0.977, 0.955, 0.932 and 0.909 for stages 0-3.
 
 ## Reward integrity
 
@@ -184,7 +186,7 @@ task, so its average differs from the pooled suite score above:
 
 | | Scenario 1 | 2 | 3 | 4 | 5 | Mean |
 |---|---|---|---|---|---|---|
-| Reference (oracle) | 0.00 | 0.90 | 0.33 | 0.65 | 0.65 | 0.50 |
+| Reference (oracle) | 0.21 | 0.94 | 0.48 | 0.69 | 0.67 | 0.60 |
 | Do nothing, stop early | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
 
 **Status: not yet run under Harbor.** The tasks follow Harbor's published
@@ -235,10 +237,13 @@ simulator.
 
 ## Known limitations
 
-- The reference carries safety stock sized for demand rising. In scenarios
-  where demand stays calm or falls that stock is wasted, and on roughly one
-  scenario in seven it does no better than the naive rule (seed 1 is one).
-  Its advantage shows in the pooled score.
+- The reference's score varies a lot by scenario: 21.0, 94.3, 48.3, 69.3 and
+  66.6 on seeds 1-5. In scenario 1 demand drifts down, so safety stock held
+  against a rise is wasted and the naive rule is close to the best possible
+  without foresight; even with service levels chosen in hindsight for that
+  scenario, this kind of policy reaches about 22. On the 40 seeds 3000-3039
+  it fails to beat the naive rule on 2. One agent scenario run beat it
+  (Haiku run 3 on scenario 4).
 - The agent results are three Haiku runs and one Sonnet run, at medium effort
   and without code execution. They were made through the Anthropic API with
   `evaluate.py`, where the agent sees the rules, the state and its own notes

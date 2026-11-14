@@ -8,38 +8,38 @@
   ],
   "results": {
     "reference": {
-      "score": 67.0,
-      "total_cost": 22754.0,
+      "score": 73.3,
+      "total_cost": 20249.0,
       "per_seed": {
         "1": {
-          "cost": 4195.2,
+          "cost": 3563.0,
           "naive": 4149.0,
           "floor": 1359.2,
-          "score": 0.0
+          "score": 21.0
         },
         "2": {
-          "cost": 3783.0,
+          "cost": 3096.2,
           "naive": 18050.2,
           "floor": 2200.5,
-          "score": 90.0
+          "score": 94.3
         },
         "3": {
-          "cost": 5271.8,
+          "cost": 4649.0,
           "naive": 6561.8,
           "floor": 2605.5,
-          "score": 32.6
+          "score": 48.3
         },
         "4": {
-          "cost": 5123.8,
+          "cost": 4700.0,
           "naive": 10969.0,
           "floor": 1919.0,
-          "score": 64.6
+          "score": 69.3
         },
         "5": {
-          "cost": 4380.2,
+          "cost": 4240.8,
           "naive": 9457.8,
           "floor": 1628.0,
-          "score": 64.8
+          "score": 66.6
         }
       }
     },
@@ -117,34 +117,34 @@
     },
     "stop after week 10": {
       "score": 0.0,
-      "total_cost": 832894.8,
+      "total_cost": 834228.8,
       "per_seed": {
         "1": {
-          "cost": 120002.2,
+          "cost": 119918.0,
           "naive": 4149.0,
           "floor": 1359.2,
           "score": 0.0
         },
         "2": {
-          "cost": 224646.0,
+          "cost": 225053.0,
           "naive": 18050.2,
           "floor": 2200.5,
           "score": 0.0
         },
         "3": {
-          "cost": 171795.0,
+          "cost": 172417.5,
           "naive": 6561.8,
           "floor": 2605.5,
           "score": 0.0
         },
         "4": {
-          "cost": 171698.0,
+          "cost": 172031.8,
           "naive": 10969.0,
           "floor": 1919.0,
           "score": 0.0
         },
         "5": {
-          "cost": 144753.5,
+          "cost": 144808.5,
           "naive": 9457.8,
           "floor": 1628.0,
           "score": 0.0

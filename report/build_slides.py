@@ -72,13 +72,13 @@ def main():
     curve = json.loads(pathlib.Path("results/training.json").read_text())["curve"]
 
     score_bars = bars([
-        ("Reference", 67.0, REF), ("Small policy, trained", 62.3, SMALL),
+        ("Reference", 73.3, REF), ("Small policy, trained", 62.3, SMALL),
         ("Haiku 5.5, run 3", 52.7, AGENT), ("Haiku 5.5, run 2", 48.3, AGENT),
         ("Haiku 5.5, run 1", 42.3, AGENT), ("Sonnet 5.5, run 1", 21.7, AGENT),
         ("Naive pass-through", 0.0, GREY), ("Stop after week 10", 0.0, GREY),
         ("Do nothing", 0.0, GREY)])
     exploit_bars = bars([
-        ("Reference", 67.0, REF), ("Do nothing", 0.0, GREY),
+        ("Reference", 73.3, REF), ("Do nothing", 0.0, GREY),
         ("Stop after week 1 / 10 / 26 / 40", 0.0, GREY),
         ("Flood every stage with maximum orders", 0.0, GREY),
         ("Hoard stock at the factory", 0.0, GREY), ("Random orders", 0.0, GREY)])
@@ -187,7 +187,7 @@ pre { font-family: Consolas, monospace; font-size: 12.5pt; background: #f0efec; 
       <span><span class="sw" style="background:#eb6834"></span>Frontier agent</span>
       <span><span class="sw" style="background:#1baf7a"></span>Policy trained on the environment</span>
       <span><span class="sw" style="background:#9a9993"></span>Baseline</span></div>
-    <p style="font-size:13.5pt;color:#52514e;margin-top:10pt">The reference had the lower cost in 18 of 20 agent scenario runs.
+    <p style="font-size:13.5pt;color:#52514e;margin-top:10pt">The reference had the lower cost in 19 of 20 agent scenario runs.
       Sonnet was run once; Haiku three times. Both at medium effort, without code execution.</p>
   </div>
   <div class="foot"><span>Delayed Supply Chain</span><span>3</span></div>
@@ -201,7 +201,7 @@ pre { font-family: Consolas, monospace; font-size: 12.5pt; background: #f0efec; 
     <div class="col"><h3>Stock in the system</h3><p class="cap">Sonnet lets it fall from 311 to 161 while demand is quiet.</p>{{STOCK}}</div>
     <div class="col"><h3>Customer backlog</h3><p class="cap">Empty retailer for 14 weeks, then 115 units short at the end.</p>{{BACKLOG}}</div>
   </div>
-  <div class="foot"><span>Cost on this scenario: reference 5,272, Sonnet 10,574</span><span>4</span></div>
+  <div class="foot"><span>Cost on this scenario: reference 4,649, Sonnet 10,574</span><span>4</span></div>
 </section>
 
 <section class="slide">
@@ -211,8 +211,8 @@ pre { font-family: Consolas, monospace; font-size: 12.5pt; background: #f0efec; 
     <div class="col">
       <table>
         <tr><th>Cost per scenario</th><th>Reference</th><th>Haiku 5.5</th><th>Sonnet 5.5</th></tr>
-        <tr><td>Holding stock</td><td>3,783–5,202</td><td>2,877–6,020</td><td>2,462–3,964</td></tr>
-        <tr><td>Customer backlog</td><td>0–320</td><td>80–4,890</td><td>3,080–6,610</td></tr>
+        <tr><td>Holding stock</td><td>3,056–4,569</td><td>2,877–6,020</td><td>2,462–3,964</td></tr>
+        <tr><td>Customer backlog</td><td>40–800</td><td>80–4,890</td><td>3,080–6,610</td></tr>
       </table>
       <div class="quote">"There is a large excess, and holding cost is the main concern. […] I'd rather let the retailer run lean."
         <span>Sonnet 5.5, scenario 3, week 15. Ten weeks later the retailer was empty.</span></div>
@@ -253,7 +253,7 @@ pre { font-family: Consolas, monospace; font-size: 12.5pt; background: #f0efec; 
         <tr><th></th><th>Evaluation</th><th>Held out</th></tr>
         <tr><td>Before training</td><td>0.0</td><td>13.5</td></tr>
         <tr><td>After training</td><td>62.3</td><td>71.8</td></tr>
-        <tr><td>Reference</td><td>67.0</td><td>78.1</td></tr>
+        <tr><td>Reference</td><td>73.3</td><td>76.4</td></tr>
       </table>
       <ul style="margin-top:14pt">
         <li>The reward gives a usable training signal, and what is learned carries over to unseen scenarios.</li>
@@ -280,7 +280,7 @@ python replay.py                   # week-by-week replay page</pre>
     </div>
     <div class="col"><h3 style="font-size:16pt;margin-bottom:8pt">What we have not shown</h3><ul>
       <li>Sonnet was run once; five scenarios is a small suite.</li>
-      <li>The reference ties the naive rule on about one scenario in seven, where demand never rises.</li>
+      <li>The reference scores only 21 on scenario 1, where demand drifts down and the naive rule is hard to beat.</li>
       <li>Our agent runs used the Anthropic API, not the MCP server.</li>
       <li>The MCP server is tested with the official MCP client, not yet with the AfterQuery harness.</li>
     </ul></div>

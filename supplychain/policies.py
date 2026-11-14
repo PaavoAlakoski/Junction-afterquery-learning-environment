@@ -11,11 +11,25 @@ import math
 from .env import N
 from .forecast import demand_quantiles
 
-# Service levels of the reference policy, one per stage (retailer first):
-# the probability that stock at or below the stage covers demand over its
-# cumulative lead time. Found by search on seeds 1000-1149 and checked on
-# seeds 1150-1249; none of these are evaluation seeds.
-REFERENCE_SERVICE = (0.98, 0.97, 0.97, 0.97)
+
+def service_levels(obs: dict) -> tuple:
+    """Service level of each stage (retailer first): the probability that
+    stock at or below the stage covers demand over its cumulative lead time.
+
+    These are the newsvendor critical ratios for a serial supply chain,
+    computed from the costs in the rules and not tuned on any scenario:
+
+        level of stage i = (b + h[i+1]) / (b + h[0])
+
+    where b is the backlog cost, h[i] the holding cost at stage i, and
+    h[4] = 0. Stock is worth holding at a stage up to the point where the
+    risk of running short downstream no longer pays for the extra holding
+    cost compared with leaving it one stage further up.
+    With the default costs: 0.977, 0.955, 0.932, 0.909.
+    """
+    b = obs["backlog_cost"]
+    h = [s["holding_cost"] for s in obs["stages"]] + [0.0]
+    return tuple((b + h[i + 1]) / (b + h[0]) for i in range(len(h) - 1))
 
 
 def _echelon_positions(obs: dict) -> list:
@@ -50,11 +64,11 @@ def reference(obs: dict, service: tuple | None = None) -> list:
 
     The forecast (see forecast.py) infers from the demand history which of
     the patterns described in the rules is unfolding. Each stage then orders
-    up to a high quantile of forecast demand over its cumulative lead time,
-    counting everything already at or on its way to that stage and the
-    stages below it.
+    up to a high quantile of forecast demand over its cumulative lead time
+    (the quantile is given by `service_levels`), counting everything already
+    at or on its way to that stage and the stages below it.
     """
-    service = service or REFERENCE_SERVICE
+    service = service or service_levels(obs)
     orders = []
     for pos, lead, p in zip(_echelon_positions(obs), _cumulative_leads(obs),
                             service):
