@@ -1,0 +1,8 @@
+# Shell scripts and Docker files run inside Linux containers: always LF.
+* text=auto
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.py text eol=lf
+*.pdf binary

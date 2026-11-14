@@ -1,0 +1,43 @@
+{
+  "note": "Claude Haiku 5.5, medium effort, seeds 1-5, run 2026-11-13. Per-seed total costs (rounded) only; the original file with transcripts was overwritten by a later baseline run.",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "per_seed_costs": {
+    "agent run 1": [
+      5970,
+      7048,
+      9880,
+      3753,
+      5514
+    ],
+    "agent run 2": [
+      3851,
+      4811,
+      8070,
+      5879,
+      6489
+    ],
+    "agent run 3": [
+      4537,
+      8338,
+      7195,
+      6133,
+      6582
+    ]
+  },
+  "total_costs": {
+    "agent run 1": 32165,
+    "agent run 2": 29100,
+    "agent run 3": 32785
+  },
+  "suite_scores": {
+    "agent run 1": 43.1,
+    "agent run 2": 50.9,
+    "agent run 3": 41.6
+  }
+}

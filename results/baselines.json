@@ -1,0 +1,227 @@
+{
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "results": {
+    "reference": {
+      "score": 67.0,
+      "total_cost": 22754.0,
+      "per_seed": {
+        "1": {
+          "cost": 4195.2,
+          "naive": 4149.0,
+          "floor": 1359.2,
+          "score": 0.0
+        },
+        "2": {
+          "cost": 3783.0,
+          "naive": 18050.2,
+          "floor": 2200.5,
+          "score": 90.0
+        },
+        "3": {
+          "cost": 5271.8,
+          "naive": 6561.8,
+          "floor": 2605.5,
+          "score": 32.6
+        },
+        "4": {
+          "cost": 5123.8,
+          "naive": 10969.0,
+          "floor": 1919.0,
+          "score": 64.6
+        },
+        "5": {
+          "cost": 4380.2,
+          "naive": 9457.8,
+          "floor": 1628.0,
+          "score": 64.8
+        }
+      }
+    },
+    "naive (pass-through)": {
+      "score": 0.0,
+      "total_cost": 49187.8,
+      "per_seed": {
+        "1": {
+          "cost": 4149.0,
+          "naive": 4149.0,
+          "floor": 1359.2,
+          "score": 0.0
+        },
+        "2": {
+          "cost": 18050.2,
+          "naive": 18050.2,
+          "floor": 2200.5,
+          "score": 0.0
+        },
+        "3": {
+          "cost": 6561.8,
+          "naive": 6561.8,
+          "floor": 2605.5,
+          "score": 0.0
+        },
+        "4": {
+          "cost": 10969.0,
+          "naive": 10969.0,
+          "floor": 1919.0,
+          "score": 0.0
+        },
+        "5": {
+          "cost": 9457.8,
+          "naive": 9457.8,
+          "floor": 1628.0,
+          "score": 0.0
+        }
+      }
+    },
+    "do nothing": {
+      "score": 0.0,
+      "total_cost": 1305699.0,
+      "per_seed": {
+        "1": {
+          "cost": 217610.2,
+          "naive": 4149.0,
+          "floor": 1359.2,
+          "score": 0.0
+        },
+        "2": {
+          "cost": 310449.2,
+          "naive": 18050.2,
+          "floor": 2200.5,
+          "score": 0.0
+        },
+        "3": {
+          "cost": 271499.8,
+          "naive": 6561.8,
+          "floor": 2605.5,
+          "score": 0.0
+        },
+        "4": {
+          "cost": 273684.2,
+          "naive": 10969.0,
+          "floor": 1919.0,
+          "score": 0.0
+        },
+        "5": {
+          "cost": 232455.5,
+          "naive": 9457.8,
+          "floor": 1628.0,
+          "score": 0.0
+        }
+      }
+    },
+    "stop after week 10": {
+      "score": 0.0,
+      "total_cost": 832894.8,
+      "per_seed": {
+        "1": {
+          "cost": 120002.2,
+          "naive": 4149.0,
+          "floor": 1359.2,
+          "score": 0.0
+        },
+        "2": {
+          "cost": 224646.0,
+          "naive": 18050.2,
+          "floor": 2200.5,
+          "score": 0.0
+        },
+        "3": {
+          "cost": 171795.0,
+          "naive": 6561.8,
+          "floor": 2605.5,
+          "score": 0.0
+        },
+        "4": {
+          "cost": 171698.0,
+          "naive": 10969.0,
+          "floor": 1919.0,
+          "score": 0.0
+        },
+        "5": {
+          "cost": 144753.5,
+          "naive": 9457.8,
+          "floor": 1628.0,
+          "score": 0.0
+        }
+      }
+    },
+    "small policy, untrained": {
+      "score": 0.0,
+      "total_cost": 65260.0,
+      "per_seed": {
+        "1": {
+          "cost": 9240.0,
+          "naive": 4149.0,
+          "floor": 1359.2,
+          "score": 0.0
+        },
+        "2": {
+          "cost": 12276.5,
+          "naive": 18050.2,
+          "floor": 2200.5,
+          "score": 36.4
+        },
+        "3": {
+          "cost": 14658.2,
+          "naive": 6561.8,
+          "floor": 2605.5,
+          "score": 0.0
+        },
+        "4": {
+          "cost": 15256.8,
+          "naive": 10969.0,
+          "floor": 1919.0,
+          "score": 0.0
+        },
+        "5": {
+          "cost": 13828.5,
+          "naive": 9457.8,
+          "floor": 1628.0,
+          "score": 0.0
+        }
+      }
+    },
+    "small policy, trained": {
+      "score": 62.3,
+      "total_cost": 24585.5,
+      "per_seed": {
+        "1": {
+          "cost": 3899.8,
+          "naive": 4149.0,
+          "floor": 1359.2,
+          "score": 8.9
+        },
+        "2": {
+          "cost": 5074.8,
+          "naive": 18050.2,
+          "floor": 2200.5,
+          "score": 81.9
+        },
+        "3": {
+          "cost": 5750.8,
+          "naive": 6561.8,
+          "floor": 2605.5,
+          "score": 20.5
+        },
+        "4": {
+          "cost": 4820.0,
+          "naive": 10969.0,
+          "floor": 1919.0,
+          "score": 67.9
+        },
+        "5": {
+          "cost": 5040.2,
+          "naive": 9457.8,
+          "floor": 1628.0,
+          "score": 56.4
+        }
+      }
+    }
+  }
+}

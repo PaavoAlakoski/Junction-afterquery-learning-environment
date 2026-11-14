@@ -1,0 +1,22 @@
+{
+  "params": {
+    "alpha_fast": 0.1794,
+    "alpha_slow": 0.6593,
+    "gain_up": 0.3,
+    "gain_down": 0.2814,
+    "z": 0.9248,
+    "c0": 2.9934,
+    "c1": 5.9174,
+    "c2": 8.8105,
+    "c3": 13.0966
+  },
+  "trained_on": "seeds 2000-2059",
+  "episodes": 45000,
+  "final": {
+    "generation": 30,
+    "episodes": 45000,
+    "train": 73.8,
+    "held_out": 71.8,
+    "evaluation": 62.3
+  }
+}

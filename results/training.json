@@ -1,0 +1,243 @@
+{
+  "untrained": {
+    "alpha_fast": 0.5,
+    "alpha_slow": 0.5,
+    "gain_up": 0.0,
+    "gain_down": 0.0,
+    "z": 0.0,
+    "c0": 2.0,
+    "c1": 4.0,
+    "c2": 6.0,
+    "c3": 9.0
+  },
+  "trained": {
+    "alpha_fast": 0.1794,
+    "alpha_slow": 0.6593,
+    "gain_up": 0.3,
+    "gain_down": 0.2814,
+    "z": 0.9248,
+    "c0": 2.9934,
+    "c1": 5.9174,
+    "c2": 8.8105,
+    "c3": 13.0966
+  },
+  "curve": [
+    {
+      "generation": 0,
+      "episodes": 0,
+      "train": 11.8,
+      "held_out": 13.5,
+      "evaluation": 0.0
+    },
+    {
+      "generation": 1,
+      "episodes": 1500,
+      "train": 57.2,
+      "held_out": 55.8,
+      "evaluation": 38.5
+    },
+    {
+      "generation": 2,
+      "episodes": 3000,
+      "train": 68.6,
+      "held_out": 67.4,
+      "evaluation": 52.3
+    },
+    {
+      "generation": 3,
+      "episodes": 4500,
+      "train": 69.1,
+      "held_out": 67.9,
+      "evaluation": 53.9
+    },
+    {
+      "generation": 4,
+      "episodes": 6000,
+      "train": 70.3,
+      "held_out": 68.8,
+      "evaluation": 56.3
+    },
+    {
+      "generation": 5,
+      "episodes": 7500,
+      "train": 70.7,
+      "held_out": 69.2,
+      "evaluation": 57.0
+    },
+    {
+      "generation": 6,
+      "episodes": 9000,
+      "train": 71.5,
+      "held_out": 70.1,
+      "evaluation": 57.8
+    },
+    {
+      "generation": 7,
+      "episodes": 10500,
+      "train": 72.0,
+      "held_out": 70.5,
+      "evaluation": 58.4
+    },
+    {
+      "generation": 8,
+      "episodes": 12000,
+      "train": 72.4,
+      "held_out": 70.9,
+      "evaluation": 59.2
+    },
+    {
+      "generation": 9,
+      "episodes": 13500,
+      "train": 72.6,
+      "held_out": 71.0,
+      "evaluation": 59.6
+    },
+    {
+      "generation": 10,
+      "episodes": 15000,
+      "train": 72.8,
+      "held_out": 71.1,
+      "evaluation": 60.5
+    },
+    {
+      "generation": 11,
+      "episodes": 16500,
+      "train": 73.0,
+      "held_out": 71.1,
+      "evaluation": 60.9
+    },
+    {
+      "generation": 12,
+      "episodes": 18000,
+      "train": 73.1,
+      "held_out": 71.2,
+      "evaluation": 61.0
+    },
+    {
+      "generation": 13,
+      "episodes": 19500,
+      "train": 73.2,
+      "held_out": 71.2,
+      "evaluation": 60.9
+    },
+    {
+      "generation": 14,
+      "episodes": 21000,
+      "train": 73.3,
+      "held_out": 71.3,
+      "evaluation": 61.0
+    },
+    {
+      "generation": 15,
+      "episodes": 22500,
+      "train": 73.3,
+      "held_out": 71.3,
+      "evaluation": 61.2
+    },
+    {
+      "generation": 16,
+      "episodes": 24000,
+      "train": 73.3,
+      "held_out": 71.3,
+      "evaluation": 61.4
+    },
+    {
+      "generation": 17,
+      "episodes": 25500,
+      "train": 73.3,
+      "held_out": 71.4,
+      "evaluation": 61.6
+    },
+    {
+      "generation": 18,
+      "episodes": 27000,
+      "train": 73.4,
+      "held_out": 71.4,
+      "evaluation": 61.4
+    },
+    {
+      "generation": 19,
+      "episodes": 28500,
+      "train": 73.4,
+      "held_out": 71.4,
+      "evaluation": 61.3
+    },
+    {
+      "generation": 20,
+      "episodes": 30000,
+      "train": 73.4,
+      "held_out": 71.4,
+      "evaluation": 61.5
+    },
+    {
+      "generation": 21,
+      "episodes": 31500,
+      "train": 73.4,
+      "held_out": 71.5,
+      "evaluation": 61.6
+    },
+    {
+      "generation": 22,
+      "episodes": 33000,
+      "train": 73.5,
+      "held_out": 71.5,
+      "evaluation": 61.7
+    },
+    {
+      "generation": 23,
+      "episodes": 34500,
+      "train": 73.5,
+      "held_out": 71.5,
+      "evaluation": 61.9
+    },
+    {
+      "generation": 24,
+      "episodes": 36000,
+      "train": 73.6,
+      "held_out": 71.6,
+      "evaluation": 61.7
+    },
+    {
+      "generation": 25,
+      "episodes": 37500,
+      "train": 73.6,
+      "held_out": 71.6,
+      "evaluation": 61.5
+    },
+    {
+      "generation": 26,
+      "episodes": 39000,
+      "train": 73.7,
+      "held_out": 71.6,
+      "evaluation": 61.7
+    },
+    {
+      "generation": 27,
+      "episodes": 40500,
+      "train": 73.7,
+      "held_out": 71.6,
+      "evaluation": 62.0
+    },
+    {
+      "generation": 28,
+      "episodes": 42000,
+      "train": 73.7,
+      "held_out": 71.6,
+      "evaluation": 62.5
+    },
+    {
+      "generation": 29,
+      "episodes": 43500,
+      "train": 73.8,
+      "held_out": 71.7,
+      "evaluation": 62.4
+    },
+    {
+      "generation": 30,
+      "episodes": 45000,
+      "train": 73.8,
+      "held_out": 71.8,
+      "evaluation": 62.3
+    }
+  ]
+}

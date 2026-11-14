@@ -1,0 +1,15 @@
+services:
+  main:
+    depends_on:
+      supply-chain:
+        condition: service_healthy
+  supply-chain:
+    build:
+      context: ./mcp-server
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 2s
+      timeout: 5s
+      retries: 30

@@ -1,0 +1,24 @@
+schema_version = "1.4"
+
+[task]
+name = "rome-48h/delayed-supply-chain-5"
+description = "Run a four-stage supply chain for 52 weeks at the lowest total cost (scenario 5)."
+keywords = ["planning", "inventory", "delayed-effects"]
+
+[metadata]
+category = "planning"
+
+[agent]
+timeout_sec = 3600.0
+
+[verifier]
+timeout_sec = 120.0
+
+[environment]
+cpus = 1
+memory_mb = 2048
+
+[[environment.mcp_servers]]
+name = "supply-chain"
+transport = "streamable-http"
+url = "http://supply-chain:8000/mcp"

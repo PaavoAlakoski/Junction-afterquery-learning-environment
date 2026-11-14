@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Delayed Supply Chain: findings report</title>
+<style>
+  @page { size: A4; margin: 18mm 17mm 18mm 17mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", Arial, sans-serif; font-size: 10.2pt; line-height: 1.42;
+         color: #1c2430; margin: 0; }
+  h1 { font-size: 21pt; margin: 0 0 2pt; letter-spacing: -0.2pt; }
+  .sub { color: #56627a; font-size: 10.5pt; margin: 0 0 12pt; }
+  h2 { font-size: 13pt; margin: 16pt 0 5pt; padding-bottom: 3pt; border-bottom: 1.2pt solid #1f4e79;
+       color: #1f4e79; break-after: avoid; }
+  h3 { font-size: 10.6pt; margin: 10pt 0 3pt; break-after: avoid; }
+  p { margin: 0 0 6pt; }
+  ul { margin: 0 0 6pt; padding-left: 15pt; }
+  li { margin-bottom: 2.5pt; }
+  table { border-collapse: collapse; width: 100%; margin: 5pt 0 8pt; font-size: 9.6pt;
+        }
+  tr { break-inside: avoid; }
+  th, td { padding: 3.5pt 6pt; border-bottom: 0.6pt solid #d5dbe5; text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+  th { background: #eef2f7; border-bottom: 1pt solid #9aa7ba; font-weight: 600; }
+  td.l, th.l { text-align: left; }
+  .summary { background: #eef4fa; border-left: 3pt solid #1f4e79; padding: 8pt 11pt; margin: 0 0 10pt; }
+  .summary p:last-child, .summary ul:last-child { margin-bottom: 0; }
+  code, pre { font-family: Consolas, "Courier New", monospace; font-size: 9.2pt; }
+  pre { background: #f3f5f8; padding: 6pt 9pt; margin: 4pt 0 8pt; border-radius: 2pt; }
+  .chart { margin: 6pt 0 4pt; break-inside: avoid; }
+  .row { display: flex; align-items: center; margin-bottom: 4pt; }
+  .lab { width: 118pt; font-size: 9.6pt; }
+  .track { flex: 1; background: #f0f2f5; height: 13pt; position: relative; }
+  .bar { height: 13pt; }
+  .ref { background: #1f4e79; }
+  .agent { background: #c8632b; }
+  .base { background: #8d98a8; }
+  .small { background: #2e8b6f; }
+  .val { width: 34pt; text-align: right; font-size: 9.6pt; font-variant-numeric: tabular-nums; }
+  .cap { font-size: 8.8pt; color: #56627a; margin: 2pt 0 8pt; }
+  .win { font-weight: 700; }
+  .small { font-size: 9.2pt; color: #56627a; }
+  .nb { break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<h1>Delayed Supply Chain</h1>
+<p class="sub">Findings report for the AfterQuery "Break the Agent" challenge, Junction 2026<br>
+Team "Rome wasn't built in 48h" · 14 November 2026</p>
+
+<div class="summary">
+<p><b>Frontier agents score well below a reproducible reference run in this environment, and they lose for
+a reason that comes from the task: they cut stock to save holding cost and cannot recover when demand
+rises.</b></p>
+<ul>
+  <li>On the five default scenarios the reference scores 67.0 out of 100. Claude Haiku 5.5 scored 42.3,
+      48.3 and 52.7 in three runs; Claude Sonnet 5.5 scored 21.7 in one run.</li>
+  <li>The reference had the lower cost in 18 of the 20 agent scenario runs.</li>
+  <li>Doing nothing, stopping early, flooding the chain, hoarding at the factory and random orders all
+      score 0.</li>
+  <li>A nine-number policy trained on the environment from episode cost alone rises from 0.0 to 62.3, so
+      the reward can be learned from.</li>
+  <li>Open items: the Sonnet result is a single run, and the MCP server has not yet been run with
+      AfterQuery's harness.</li>
+</ul>
+</div>
+
+<h2>1. The setting and what an agent can learn</h2>
+<p>The agent runs a four-stage supply chain for 52 weeks: factory, distributor, wholesaler, retailer,
+customers. Each week it chooses four order quantities, one per stage. It is a centralised version of the
+"beer game" used to teach supply chain management.</p>
+<p>We chose it because the difficulty is in the decisions, not in the interface. The rules fit on one page
+and the action is four whole numbers, yet a production decision reaches a customer nine weeks later, so
+every choice has to be made against demand the agent cannot yet see. An agent can learn three things here:</p>
+<ul>
+  <li>to act on the whole pipeline of stock and shipments, not on this week's shortage;</li>
+  <li>to tell a lasting change in demand from a temporary one;</li>
+  <li>to decide where in the chain to keep buffer stock, and how much, given that being short costs ten
+      times as much as holding a unit at the retailer.</li>
+</ul>
+
+<h2>2. The environment</h2>
+<table>
+  <tr><th class="l" style="width:24%">Element</th><th class="l">Definition</th></tr>
+  <tr><td>Goal</td><td class="l">Lowest total cost over 52 weeks.</td></tr>
+  <tr><td>Action</td><td class="l">Four order quantities per week, whole numbers from 0 to 200. The factory's
+      order is production, capped at 80 per week. Orders cannot be cancelled.</td></tr>
+  <tr><td>Delays</td><td class="l">Shipments take 2, 2, 2 and 3 weeks to reach the retailer, wholesaler,
+      distributor and factory. A stage that cannot fill an order ships what it has and owes the rest.</td></tr>
+  <tr><td>Costs</td><td class="l">Holding: 1.00, 0.75, 0.50 and 0.25 per unit per week from retailer to
+      factory. Unfilled customer demand: 10 per unit per week.</td></tr>
+  <tr><td>Demand</td><td class="l">Noisy around a level that starts between 15 and 25. Every scenario has
+      one lasting change (step up, step down or ramp); half also have a seasonal wave or a short
+      promotion.</td></tr>
+  <tr><td>Handover rule</td><td class="l">The chain must end with stock covering nine weeks of recent
+      demand; each unit short costs 10. This removes the incentive to run stock down at the end.</td></tr>
+  <tr><td>Observation</td><td class="l">Everything except future demand: stock at every stage, every
+      shipment in transit and its arrival week, all backorders, full demand and order history, and all
+      cost parameters.</td></tr>
+</table>
+<p><b>Fairness.</b> The rules text given to the agent states the demand model in full, including the ranges
+for the starting level, the noise, the size and timing window of the lasting change, and the seasonal and
+promotion effects. The reference uses only that text and the same observation the agent receives.</p>
+
+<h3>Reward</h3>
+<p>For each scenario two anchors are computed on the same demand: <i>naive</i>, where every stage orders
+what customers bought this week, and <i>floor</i>, a planner that knows future demand exactly.</p>
+<pre>score = 100 × (naive − agent) / (naive − floor), clipped to 0–100</pre>
+<p>The suite score pools costs over all scenarios before applying the formula. Matching the naive rule
+scores 0; scoring 100 would require knowing the future.</p>
+
+<h2>3. The reference run</h2>
+<p>The reference is a base-stock policy driven by a Bayesian demand forecast. It is deterministic and runs
+with one command.</p>
+<ul>
+  <li><b>Forecast.</b> It draws 4,000 candidate scenarios from the demand model stated in the rules, weighs
+      each by how well it explains the demand seen so far, and reads off the distribution of demand over
+      the coming weeks.</li>
+  <li><b>Ordering.</b> Each stage orders up to a high quantile (97–98%) of forecast demand over its
+      cumulative lead time, counting everything already at or on its way to that stage and the stages
+      below it.</li>
+</ul>
+<p>Its four service levels were tuned on seeds 1000–1149 and checked on seeds 1150–1249, where it scores
+76.4 and 77.4. None of those are evaluation seeds. On ten further seeds (11–20) it scores 77.3, and on 40
+seeds never used for any tuning (3000–3039) it scores 78.1.</p>
+
+<h2>4. Results</h2>
+<p>All runs use the five default scenarios (seeds 1–5). The agents were run through the Anthropic API at
+medium effort. Each week the agent received the rules, the full observation and its own notes from the
+previous week, and replied with four orders. It had no code execution.</p>
+
+<div class="chart">
+  <div class="row"><div class="lab">Reference</div><div class="track"><div class="bar ref" style="width:67%"></div></div><div class="val">67.0</div></div>
+  <div class="row"><div class="lab">Small policy, trained</div><div class="track"><div class="bar small" style="width:62.3%"></div></div><div class="val">62.3</div></div>
+  <div class="row"><div class="lab">Haiku 5.5, run 3</div><div class="track"><div class="bar agent" style="width:52.7%"></div></div><div class="val">52.7</div></div>
+  <div class="row"><div class="lab">Haiku 5.5, run 2</div><div class="track"><div class="bar agent" style="width:48.3%"></div></div><div class="val">48.3</div></div>
+  <div class="row"><div class="lab">Haiku 5.5, run 1</div><div class="track"><div class="bar agent" style="width:42.3%"></div></div><div class="val">42.3</div></div>
+  <div class="row"><div class="lab">Sonnet 5.5, run 1</div><div class="track"><div class="bar agent" style="width:21.7%"></div></div><div class="val">21.7</div></div>
+  <div class="row"><div class="lab">Naive pass-through</div><div class="track"><div class="bar base" style="width:0.4%"></div></div><div class="val">0.0</div></div>
+  <div class="row"><div class="lab">Stop after week 10</div><div class="track"><div class="bar base" style="width:0.4%"></div></div><div class="val">0.0</div></div>
+  <div class="row"><div class="lab">Do nothing</div><div class="track"><div class="bar base" style="width:0.4%"></div></div><div class="val">0.0</div></div>
+</div>
+<p class="cap">Suite score, 0–100. Blue: reference. Green: policy trained on the environment (section 7). Orange: agent runs. Grey: baselines.</p>
+
+<table class="nb">
+  <tr><th>Policy</th><th>Suite score</th><th>Total cost</th><th>Gap to reference</th></tr>
+  <tr><td>Reference</td><td>67.0</td><td>22,754</td><td>–</td></tr>
+  <tr><td>Small policy, trained</td><td>62.3</td><td>24,586</td><td>4.7</td></tr>
+  <tr><td>Haiku 5.5 (mean of 3 runs)</td><td>47.8</td><td>30,326</td><td>19.2</td></tr>
+  <tr><td>Sonnet 5.5 (1 run)</td><td>21.7</td><td>40,622</td><td>45.3</td></tr>
+  <tr><td>Naive pass-through</td><td>0.0</td><td>49,188</td><td>67.0</td></tr>
+  <tr><td>Stop after week 10</td><td>0.0</td><td>832,895</td><td>67.0</td></tr>
+  <tr><td>Do nothing</td><td>0.0</td><td>1,305,699</td><td>67.0</td></tr>
+</table>
+
+<h3>Cost per scenario (lower is better)</h3>
+<table class="nb">
+  <tr><th>Scenario</th><th>Naive</th><th>Reference</th><th>Haiku 1</th><th>Haiku 2</th><th>Haiku 3</th><th>Sonnet</th></tr>
+  <tr><td>1</td><td>4,149</td><td>4,195</td><td>5,081</td><td class="win">3,930</td><td>5,732</td><td>6,334</td></tr>
+  <tr><td>2</td><td>18,050</td><td>3,783</td><td>6,190</td><td>6,940</td><td>4,524</td><td>8,386</td></tr>
+  <tr><td>3</td><td>6,562</td><td>5,272</td><td>9,956</td><td>7,163</td><td>6,966</td><td>10,574</td></tr>
+  <tr><td>4</td><td>10,969</td><td>5,124</td><td>6,686</td><td>6,320</td><td class="win">3,961</td><td>6,767</td></tr>
+  <tr><td>5</td><td>9,458</td><td>4,380</td><td>4,559</td><td>5,761</td><td>7,207</td><td>8,562</td></tr>
+  <tr><td><b>Total</b></td><td><b>49,188</b></td><td><b>22,754</b></td><td><b>32,473</b></td><td><b>30,114</b></td><td><b>28,390</b></td><td><b>40,622</b></td></tr>
+</table>
+<p class="cap">Bold: the two scenario runs in which an agent beat the reference.</p>
+<p>Every agent run finished below the reference on the suite total. Haiku's runs spread over about ten
+points, and the same scenario can swing widely between runs (scenario 5: 4,559 to 7,207).</p>
+
+<h2>5. Where the agents fall short, and why</h2>
+<p><b>Both models run out of stock.</b> Replaying each agent's orders and splitting the cost shows that the
+agents spend about the same as the reference on holding stock, or less, and far more on unfilled customer
+demand.</p>
+<table class="nb">
+  <tr><th>Cost per scenario</th><th>Reference</th><th>Haiku 5.5</th><th>Sonnet 5.5</th></tr>
+  <tr><td>Holding stock</td><td>3,783–5,202</td><td>2,877–6,020</td><td>2,462–3,964</td></tr>
+  <tr><td>Customer backlog</td><td>0–320</td><td>80–4,890</td><td>3,080–6,610</td></tr>
+  <tr><td>Handover penalty</td><td>0</td><td>0</td><td>0</td></tr>
+</table>
+<p>The mistake connects to three decisions in the task:</p>
+<ul>
+  <li><b>Trading holding cost against shortage risk.</b> The agents reason, correctly, that stock costs
+      money, and trim it. They underweight that a unit short costs ten times a unit held at the retailer,
+      and 40 times a unit held at the factory.</li>
+  <li><b>Hedging against a change the rules announce.</b> The rules say a step up of ×1.4–1.9 can arrive
+      between weeks 9 and 35. Sonnet's notes mention watching for it, but it held no stock against it.</li>
+  <li><b>Acting nine weeks ahead.</b> Once demand has risen, new production takes up to nine weeks to
+      reach customers. Reacting at that point is too late; the stock has to be in the pipeline already.</li>
+</ul>
+<p><b>Example: Sonnet 5.5 on scenario 3.</b> When demand dipped in weeks 13–20, Sonnet ordered almost
+nothing upstream and let system stock fall from 311 to 187 units; the reference kept it near 300. Demand
+rose from week 25, the retailer stood empty for 14 weeks, and backlog reached 39 units. A second rise in
+weeks 48–52 pushed backlog to 115 units with the factory already at its cap of 80. Sonnet's cost was
+10,574 against the reference's 5,272.</p>
+<p><b>The stronger model did worse.</b> Sonnet trimmed stock more aggressively than Haiku, which lowered its
+holding cost and raised its backlog cost by more. This rests on one Sonnet run, so the size of the
+difference is uncertain.</p>
+<p><b>Other observations.</b> All 260 Sonnet replies and 779 of 780 Haiku replies were valid. One Haiku reply
+(run 2, scenario 5, week 21) contained notes but no orders and was scored as zero orders, as the rules
+state. No run paid a handover penalty.</p>
+
+<h2>6. Reward integrity</h2>
+<p><code>test_exploits.py</code> contains 17 automated checks, all passing:</p>
+<ul>
+  <li>doing nothing, stopping after week 1, 10, 26 or 40, flooding the chain with maximum orders, and
+      hoarding at the factory, and random orders all score 0;</li>
+  <li>stopping in the last few weeks, or dumping stock and refilling in the final week, never beats
+      playing to the end;</li>
+  <li>malformed orders (NaN, negatives, strings, wrong length, booleans) count as zero and are capped at
+      the limits;</li>
+  <li>units are conserved, and results are identical on repeated runs with the same seed;</li>
+  <li>the MCP server gives the same cost as playing the environment directly; an agent that never acts,
+      stops, or sends malformed arguments is scored as placing zero orders; and there is no tool to restart
+      the episode or choose the scenario, so an agent cannot replay a scenario to learn its demand.</li>
+</ul>
+<p>If an agent crashes or stops, the remaining weeks are played with zero orders, so stopping early is
+scored as doing nothing from that point.</p>
+
+<p>Training the small policy in section 7 was also a search for loopholes: 45,000 episodes of optimising
+cost directly ended below the reference, with ordinary ordering behaviour.</p>
+
+<h2>7. Learning from the environment (stretch goal)</h2>
+<p><code>train.py</code> trains a small ordering policy from episode cost alone. The policy has nine numbers:
+two smoothing speeds for the demand history, how far to follow a rise or a fall, a safety margin, and how
+many weeks of demand each stage keeps. It knows nothing about the demand model in the rules and does not
+use the reference's forecast. Training is a cross-entropy search over 45,000 episodes on seeds 2000–2059
+and takes about two minutes.</p>
+<table class="nb">
+  <tr><th></th><th>Evaluation seeds 1–5</th><th>Held-out seeds 3000–3039</th></tr>
+  <tr><td>Before training</td><td>0.0</td><td>13.5</td></tr>
+  <tr><td>After training</td><td>62.3</td><td>71.8</td></tr>
+  <tr><td>Reference</td><td>67.0</td><td>78.1</td></tr>
+</table>
+<p>The reward gives a usable training signal, what is learned carries over to scenarios never trained on,
+and the trained policy ends above both Claude models and below the reference. The task is therefore
+learnable, and the agents' gap is not explained by the task being impossible. This is a small scripted
+policy; we did not fine-tune a language model, so it answers the stretch goal only in part.</p>
+
+<h2>8. Reproducing the results</h2>
+<pre>python evaluate.py                 # reference, baselines and the small policy
+python -m unittest -v              # reward-exploit tests
+python evaluate.py --agent claude  # three agent runs (needs ANTHROPIC_API_KEY)
+python mcp_server.py --seed 1      # serve one scenario to an agent harness over MCP
+python train.py                    # retrain the small policy
+python replay.py                   # build replay.html, a week-by-week comparison of saved runs</pre>
+<p>The simulator, baselines and reference need Python 3.10 or later and only the standard library. The
+reference and baselines are deterministic. Agent runs vary between repetitions; each is saved with its full
+transcripts to a timestamped file in <code>results/</code>.</p>
+
+<h2>9. Limitations</h2>
+<ul>
+  <li><b>Sample size.</b> Five scenarios, three Haiku runs and one Sonnet run. The direction of the gap is
+      consistent; its exact size is not well measured.</li>
+  <li><b>The reference is not best on every scenario.</b> On scenario 1 it scores 0.0, slightly worse than
+      naive, because it carries stock against a rise in demand that does not come. On the tuning seeds it
+      fails to beat naive on roughly one scenario in seven. Its advantage shows in the pooled score.</li>
+  <li><b>Agent setup.</b> The agents ran at medium effort without code execution, through the Anthropic
+      API: each week they saw the rules, the state and their own notes. Through the MCP server an agent
+      keeps its whole conversation instead. No agent has been run that way yet, so the gap under the
+      judging harness is unmeasured.</li>
+  <li><b>Harness.</b> <code>mcp_server.py</code> exposes the environment as an MCP server with four tools
+      (rules, state, place orders, stop), over stdio or HTTP. A full episode has been played through it with the official MCP
+      Python client; it has not yet been run with AfterQuery's harness.</li>
+  <li><b>The floor is not a proven lower bound.</b> It is a feasible plan made with perfect foresight.</li>
+  <li><b>Stretch goal.</b> The model we trained is a nine-number policy, not a smaller language model.</li>
+</ul>
+
+</body>
+</html>
